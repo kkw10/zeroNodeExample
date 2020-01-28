@@ -66,7 +66,8 @@ module.exports = (server, app, sessionMiddleware) => { // server = express serve
 
     socket.to(roomId).emit('join', { // 그냥 emit은 모두에게 보내지만, to를 사용하면 해당 방에만 메세지를 보낸다.
       user: 'system',
-      chat: `${req.session.color}님이 입장하셨습니다.`
+      chat: `${req.session.color}님이 입장하셨습니다.`,
+      number: socket.adapter.rooms[roomId].length,
     });
 
     socket.on('disconnect', () => {
@@ -89,6 +90,7 @@ module.exports = (server, app, sessionMiddleware) => { // server = express serve
         socket.to(roomId).emit('exit', {
           user: 'system',
           chat: `${req.session.color}님이 퇴장하셨습니다.`,
+          number: socket.adapter.rooms[roomId].length,
         });
       }
     })
