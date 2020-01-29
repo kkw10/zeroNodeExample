@@ -4,11 +4,9 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
-const ColorHash = require('color-hash');
 
 require('dotenv').config();
 
-const webSocket = require('./socket');
 const indexRouter = require('./routes');
 const connect = require('./schemas');
 
@@ -36,14 +34,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware);
 app.use(flash());
-app.use((req, res, next) => { // 익명의 접속자들에게 컬러값을 준다.
-  if (!req.session.color) {
-    const colorHash = new ColorHash();
-    req.session.color = colorHash.hex(req.sessionID);
-  }
-
-  next();
-});
 
 app.use('/', indexRouter);
 app.use((req, res, next) => {
@@ -58,6 +48,6 @@ app.use((err, req, res) => {
   res.render('error');
 });
 
-const server = app.listen(app.get('port'), () => {
+app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기중');
 });
